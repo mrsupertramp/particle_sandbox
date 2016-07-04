@@ -5,13 +5,20 @@
 #include "ofxMidi.h"
 
 
-class MPD{
+class MPD: public ofxMidiListener{
 	public:
 		void setup();
 
-		//void newMessage(ofxMidiEventArgs &args);
+		void newMidiMessage(ofxMidiMessage& eventArgs);
+
+		bool newDataAvailable;
+
+		ofxMidiMessage midiMessage;
+
+		ofxMidiIn midiIn;
+
 
 	private:
-		ofxMidiIn midiIn;
-		ofxMidiMessage midiMessage; 
+
+
 };

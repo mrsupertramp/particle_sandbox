@@ -42,9 +42,7 @@ void ofApp::setup()
 	
 	guiParameters.setup(nextParticle.parameters.group, "Parameters", 5, 200);
 	guiParameters.add(but_overwriteParameters.setup("Overwrite"));
-	
-	//gui.setup();
-	
+
 		
 	//---------------------------------------------------------------------------------------
 	
@@ -90,6 +88,11 @@ void ofApp::update()
 		if (particles[i].isDead)
 			particles.erase(particles.begin() + i);
 	}
+	if (mpd.newDataAvailable) {
+		updateParticleFromMpd();
+		mpd.newDataAvailable = false;
+	}
+
 }
 
 //--------------------------------------------------------------
@@ -186,6 +189,37 @@ void ofApp::drawBorders()
 }
 
 //---------------------------------------------------------------------------
+
+
+void ofApp::updateParticleFromMpd()
+{
+	int pitch = mpd.midiMessage.pitch;
+	int vel = mpd.midiMessage.velocity;
+	int control = mpd.midiMessage.control;
+	int value = mpd.midiMessage.value;
+
+	switch (mpd.midiMessage.control) {
+		case 2:
+			nextParticle.parameters.color_diff_mult = ofMap(value,1,127,0.0,1.0);
+			break;
+		case 3:
+			nextParticle.parameters.collision_mult = ofMap(value,1,127,0.0,1.0);
+			break;
+		case 4:
+			nextParticle.parameters.drag = ofMap(value,1,127,0.0,1.0);
+			break;
+		case 5:
+			nextParticle.parameters.mass = ofMap(value,1,127,0.01,4.0);
+			break;
+		case 6:
+			nextParticle.parameters.spring_stiffness = ofMap(value,1,127,0.0,4.0);
+			break;
+		case 7:
+			nextParticle.parameters.spring_damping = ofMap(value,1,127,0.0,1.0);
+			break;
+	}
+	overwriteParameters();
+}
 
 void ofApp::keyPressed(int key)
 {

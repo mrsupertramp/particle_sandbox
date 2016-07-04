@@ -74,6 +74,8 @@ class ofApp : public ofBaseApp{
 		//-------------------------------------------------------CONTROLER MPD----
 
 		MPD mpd;
+		void updateParticleFromMpd();
+
 
 		//---------------------------------------------------------------------
 

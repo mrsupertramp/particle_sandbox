@@ -27,7 +27,7 @@ COPYRIGHT ENRICO STEINFELD. ALL RIGHTS RESERVED
 
 #define CONST_TIME_BIRTH		1000
 #define CONST_CONNECT_DIST 		30		//TODO: Umbenennen
-#define CONST_MAX_SPEED 		10		//TODO: Umbenennen
+#define CONST_MAX_SPEED 		20		//TODO: Umbenennen
 #define CONST_BORDER_MULT 		0.4		//TODO: Umbenennen
 #define CONST_DRAW_LINE_DIST	100
 
