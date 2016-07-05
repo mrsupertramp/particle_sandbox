@@ -115,7 +115,8 @@ void ofApp::draw()
 	
 	//drawBorders();		//TODO: fix alpha blending issue
 	for (unsigned int i=0 ; i<particles.size(); ++i){
-		particles[i].draw(camera.getPosition());
+		//particles[i].drawSphere();
+		//particles[i].drawCircle(camera.getPosition());
 	}
 	
 	//ofDrawAxis(32);
@@ -165,7 +166,7 @@ void ofApp::eliminateParticle(int index){
 
 void ofApp::drawBorders()
 {
-	ofPushMatrix();
+	//ofPushMatrix();
 	//ofTranslate(paraBorderX->x,paraBorderY->x,paraBorderZ->x);
 	//ofBoxPrimitive box(paraBorderX->y-paraBorderX->x, paraBorderY->y-paraBorderY->x, paraBorderZ->y-paraBorderZ->x);
 	/*box.setSideColor(0, ofColor(0,30));

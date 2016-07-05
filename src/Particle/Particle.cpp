@@ -90,7 +90,7 @@ void Particle::update()
 	force = ofVec3f(0,0,0);
 }
 
-void Particle::draw(ofVec3f lookAt)
+void Particle::drawCircle(ofVec3f lookAt)
 {
 	ofFill();
 
@@ -146,9 +146,20 @@ void Particle::draw(ofVec3f lookAt)
 	
 }
 
-void Particle::draw()
+void Particle::drawCircle()
 {
-	draw(ofVec3f(0,0,0));
+	drawCircle(ofVec3f(0,0,0));
+}
+
+void Particle::drawSphere()
+{
+	ofSpherePrimitive sphere;
+	sphere.setRadius(20);
+
+	ofPushMatrix();
+	ofTranslate(getPosition());
+	sphere.draw();
+	ofPopMatrix();
 }
 
 //--------------------------------------------------------------------------------------------
@@ -293,9 +304,9 @@ void Particle::setAttributes(ParticleAttributes *attributes_)
 {
 	if (attributes_ != NULL) {		
 		for (unsigned int i=0; i<attributes.group.size(); ++i){
-			cout << i << "  " << attributes.group.getBool(i) << "gets ";
+			//cout << i << "  " << attributes.group.getBool(i) << "gets ";
 			attributes.group.getBool(i).set(attributes_->group.getBool(i));//TODO: segmentation faul
-			cout << attributes.group.getBool(i) << endl;
+			//cout << attributes.group.getBool(i) << endl;
 		}
 
 		attributes.bits = attributes_->bits;

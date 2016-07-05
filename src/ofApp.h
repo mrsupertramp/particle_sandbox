@@ -60,6 +60,7 @@ class ofApp : public ofBaseApp{
 		
 		
 		
+		
 		//--------------------------------------------------------------------
 		
 		
@@ -75,6 +76,7 @@ class ofApp : public ofBaseApp{
 
 		MPD mpd;
 		void updateParticleFromMpd();
+
 
 
 		//---------------------------------------------------------------------
