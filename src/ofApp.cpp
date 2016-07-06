@@ -27,22 +27,18 @@ void ofApp::setup()
 
 	ofSetSmoothLighting(true);
 
-	particles.reserve(20000);
-	
-	staticParticles.reserve(2000);
-	
+	swarm.setup();
+	particleTemplate.velocity = ofVec3f(ofRandomf(),ofRandomf(),ofRandomf());
+		
 	//-------------------------------------------------------------------------GUI----------
 	
 	but_overwriteAttributes.addListener(this, &ofApp::overwriteAttributes);
 	but_overwriteParameters.addListener(this, &ofApp::overwriteParameters);
-
-	//nextParticle = new Particle();
-	Particle particle;
 	
-	guiAttributes.setup(nextParticle.attributes.group, "Attributes", 5,5);
+	guiAttributes.setup(particleTemplate.attributes.group, "Attributes", 5,5);
 	guiAttributes.add(but_overwriteAttributes.setup("Overwrite"));
 	
-	guiParameters.setup(nextParticle.parameters.group, "Parameters", 5, 200);
+	guiParameters.setup(particleTemplate.parameters.group, "Parameters", 5, 200);
 	guiParameters.add(but_overwriteParameters.setup("Overwrite"));
 
 		
@@ -96,11 +92,7 @@ void ofApp::setup()
 //--------------------------------------------------------------
 void ofApp::update()
 {
-	for (unsigned int i=0; i<particles.size(); ++i){
-		particles[i].update();
-		if (particles[i].isDead)
-			particles.erase(particles.begin() + i);
-	}
+	swarm.update();
 	if (mpd.newDataAvailable) {
 		updateParticleFromMpd();
 		mpd.newDataAvailable = false;
@@ -135,10 +127,7 @@ void ofApp::draw()
 
 
 	//drawBorders();		//TODO: fix alpha blending issue
-	for (unsigned int i=0 ; i<particles.size(); ++i){
-		//particles[i].draw(camera.getPosition());
-		particles[i].drawSphere();
-	}
+	swarm.draw();
 	
 	//ofDrawAxis(32);
 	//ofPopMatrix();
@@ -166,27 +155,12 @@ void ofApp::draw()
 
 void ofApp::overwriteAttributes()
 {
-	for (unsigned int i=0; i<particles.size(); ++i){
-		particles[i].resetLinks();	//TODO: make this line not necessary
-		particles[i].setAttributes(&(nextParticle.attributes));
-	}
+	swarm.overwriteAttributes(particleTemplate);
 }
 
 void ofApp::overwriteParameters()
 {
-	for (unsigned int i=0; i<particles.size(); ++i){
-		particles[i].setParameters(&(nextParticle.parameters));
-	}
-}
-
-void ofApp::generateParticle(ofVec3f pos, ofVec3f vel)
-{	
-	particles.push_back(Particle(pos, vel, &(nextParticle.parameters), &(nextParticle.attributes), &particles));
-}
-
-void ofApp::eliminateParticle(int index){
-	particles[index].resetLinks();
-	particles[index].isDead = true;
+	swarm.overwriteParameters(particleTemplate);
 }
 
 void ofApp::drawBorders()
@@ -223,6 +197,9 @@ void ofApp::updateParticleFromMpd()
 	int vel = mpd.midiMessage.velocity;
 	int control = mpd.midiMessage.control;
 	int value = mpd.midiMessage.value;
+	/*
+	*	auf dem mpd kann ausgewählt werden wohin die parameter/attributes geladen werden
+	*	-> zu einem der Swarms; zu allen; für die nächsten generierten Partikel
 
 	switch (mpd.midiMessage.control) {
 		case 2:
@@ -245,6 +222,7 @@ void ofApp::updateParticleFromMpd()
 			break;
 	}
 	overwriteParameters();
+	*/
 }
 
 void ofApp::keyPressed(int key)
@@ -271,11 +249,10 @@ void ofApp::keyPressed(int key)
 	} else if (key == 's') {
 		hideStats = !hideStats;
 	} else if (key == 'k') {
-		if (particles.size() > 0)
-	   		eliminateParticle(0);
+		if (swarm.getNumParticles() > 0)
+	   		swarm.eliminateParticle(0);
 	} else {
-		generateParticle(	ofVec3f(ofGetMouseX()-ofGetWidth()/2, ofGetMouseY()-ofGetHeight()/2, ofRandomf()*100), 
-							ofVec3f(ofRandomf()*2, ofRandomf()*2, ofRandomf()*2));
+		swarm.generateParticle(particleTemplate);
 		//cout << getBit(particles[particles.size()-1].attributes.bits) << endl;
 	}
 }
