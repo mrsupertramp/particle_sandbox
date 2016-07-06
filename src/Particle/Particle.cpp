@@ -154,11 +154,12 @@ void Particle::draw()
 void Particle::drawSphere()
 {
 	ofSpherePrimitive sphere;
-	sphere.setResolution(6);
+	sphere.setResolution(5);
 	ofPushMatrix();
 	ofTranslate(getPosition());
-	//sphere.drawWireframe();
-	sphere.draw();
+	ofSetColor(255);
+	sphere.drawWireframe();
+	//sphere.draw();
 
 	ofPopMatrix();
 }
@@ -305,9 +306,9 @@ void Particle::setAttributes(ParticleAttributes *attributes_)
 {
 	if (attributes_ != NULL) {		
 		for (unsigned int i=0; i<attributes.group.size(); ++i){
-			cout << i << "  " << attributes.group.getBool(i) << "gets ";
+			attributes.group.getBool(i);
 			attributes.group.getBool(i).set(attributes_->group.getBool(i));//TODO: segmentation faul
-			cout << attributes.group.getBool(i) << endl;
+			//cout << attributes.group.getBool(i) << endl;
 		}
 
 		attributes.bits = attributes_->bits;

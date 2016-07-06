@@ -55,7 +55,7 @@ void ofApp::setup()
 	//---------------------------------------------------------
 	//-------------------------------------------LIGHTS-------------
 
-	pointLight.setDiffuseColor( ofColor(0.f, 255.f, 0.f));
+	pointLight.setDiffuseColor( ofColor(255.f, 255.f, 255.f));
     
     // specular color, the highlight/shininess color //
 	pointLight.setSpecularColor( ofColor(255.f, 255.f, 255.f));
@@ -191,7 +191,7 @@ void ofApp::eliminateParticle(int index){
 
 void ofApp::drawBorders()
 {
-	ofPushMatrix();
+	//ofPushMatrix();
 	//ofTranslate(paraBorderX->x,paraBorderY->x,paraBorderZ->x);
 	//ofBoxPrimitive box(paraBorderX->y-paraBorderX->x, paraBorderY->y-paraBorderY->x, paraBorderZ->y-paraBorderZ->x);
 	/*box.setSideColor(0, ofColor(0,30));
