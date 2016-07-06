@@ -21,9 +21,11 @@ string ofApp::getBit(int k)
 void ofApp::setup()
 {
 	ofSetVerticalSync(true);
-	ofEnableSmoothing();
+	//ofEnableSmoothing();
 	ofEnableDepthTest();
 	ofSetFrameRate(60);
+
+	ofSetSmoothLighting(true);
 
 	particles.reserve(20000);
 	
@@ -51,7 +53,18 @@ void ofApp::setup()
 	camera.setDistance(100);
 	
 	//---------------------------------------------------------
-	
+	//-------------------------------------------LIGHTS-------------
+
+	pointLight.setDiffuseColor( ofColor(0.f, 255.f, 0.f));
+    
+    // specular color, the highlight/shininess color //
+	pointLight.setSpecularColor( ofColor(255.f, 255.f, 255.f));
+    pointLight.setPosition(0, 0, 0);
+    
+    // shininess is a value between 0 - 128, 128 being the most shiny //
+	material.setShininess( 64 );
+
+
 	//---------------------------------------CONTROLLER MPD------------
 
 	mpd.setup();
@@ -99,7 +112,8 @@ void ofApp::update()
 void ofApp::draw()
 {	
 	camera.begin();
-	ofBackground(240);
+	//ofBackground(240);
+	ofBackground(10);
 	//ofPushMatrix();
 	//ofTranslate(ofGetWidth()/2, ofGetHeight()/2);
 	/*
@@ -109,17 +123,29 @@ void ofApp::draw()
 	}git
 	*/
 	
+	
 	ofEnableDepthTest();
+	ofEnableLighting();
+
 	//ofEnableAlphaBlending();
 	//glEnable(GL_DEPTH_TEST); 
-	
+
+	pointLight.enable();
+	material.begin();
+
+
 	//drawBorders();		//TODO: fix alpha blending issue
 	for (unsigned int i=0 ; i<particles.size(); ++i){
-		particles[i].draw(camera.getPosition());
+		//particles[i].draw(camera.getPosition());
+		particles[i].drawSphere();
 	}
 	
 	//ofDrawAxis(32);
 	//ofPopMatrix();
+
+	material.end();
+	// turn off lighting //
+    ofDisableLighting();
 	camera.end();
 	
 	if (!hideGui) {

@@ -151,6 +151,18 @@ void Particle::draw()
 	draw(ofVec3f(0,0,0));
 }
 
+void Particle::drawSphere()
+{
+	ofSpherePrimitive sphere;
+	sphere.setResolution(6);
+	ofPushMatrix();
+	ofTranslate(getPosition());
+	//sphere.drawWireframe();
+	sphere.draw();
+
+	ofPopMatrix();
+}
+
 //--------------------------------------------------------------------------------------------
 void Particle::evaluateAttributes()
 {

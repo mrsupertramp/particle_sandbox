@@ -40,6 +40,7 @@ class Particle : public ofNode {
 		virtual void update();
 		virtual void draw();
 		virtual void draw(ofVec3f lookAt);
+		void drawSphere();
 		
 		void changeState(unsigned int newState);
 	
