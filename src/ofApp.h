@@ -10,6 +10,8 @@ COPYRIGHT ENRICO STEINFELD. ALL RIGHTS RESERVED
 #include "Swarm.h" 
 #include "Particle.h"
 
+#define MAX_SWARMS	10
+
 class ofApp : public ofBaseApp{
 
 	public:
@@ -31,7 +33,8 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);		
 		
-		
+		void generateSwarm();
+
 		void drawBorders();
 		
 		void overwriteAttributes();
@@ -45,10 +48,13 @@ class ofApp : public ofBaseApp{
 		
 		bool hideGui = false;		
 		
+		vector <Swarm> swarms;
 		Swarm swarm;
 		
 		Particle particleTemplate;
 		
+		int selectedSwarm;
+
 		//--------------------------------------------------------------------
 		
 		
@@ -61,6 +67,8 @@ class ofApp : public ofBaseApp{
 		
 		//-----------------------------------------------------LIGHTING----------
 		ofLight pointLight;
+		ofLight spotLight;
+    	ofLight directionalLight;
 
 		ofMaterial material;
 

@@ -2,7 +2,7 @@
 
 void Swarm::setup()
 {
-	particles.reserve(20000);
+	particles.reserve(MAX_PARTICLES);
 }
 
 void Swarm::update()
@@ -18,7 +18,7 @@ void Swarm::draw()
 {
 	for (unsigned int i=0 ; i<particles.size(); ++i){
 		//particles[i].draw(camera.getPosition());
-		particles[i].drawSphere();
+		particles[i].draw();
 	}
 }
 
@@ -39,7 +39,9 @@ void Swarm::overwriteParameters(Particle temp)
 
 void Swarm::generateParticle(Particle temp)
 {	
-	particles.push_back(Particle(temp.getPosition(), temp.velocity, &(temp.parameters), &(temp.attributes), &particles));
+	if (particles.size() < MAX_PARTICLES) {
+		particles.push_back(Particle(temp.getPosition(), temp.velocity, &(temp.parameters), &(temp.attributes), &particles));
+	}
 }
 
 void Swarm::eliminateParticle(int index){

@@ -27,9 +27,12 @@ void ofApp::setup()
 
 	ofSetSmoothLighting(true);
 
-	swarm.setup();
+	swarms.reserve(MAX_SWARMS);
+	generateSwarm();
+	selectedSwarm = 0;
+
 	particleTemplate.velocity = ofVec3f(ofRandomf(),ofRandomf(),ofRandomf());
-		
+	
 	//-------------------------------------------------------------------------GUI----------
 	
 	but_overwriteAttributes.addListener(this, &ofApp::overwriteAttributes);
@@ -51,14 +54,40 @@ void ofApp::setup()
 	//---------------------------------------------------------
 	//-------------------------------------------LIGHTS-------------
 
-	pointLight.setDiffuseColor( ofColor(255.f, 255.f, 255.f));
+	pointLight.setDiffuseColor( ofColor(0.f, 255.f, 0.f));
     
     // specular color, the highlight/shininess color //
-	pointLight.setSpecularColor( ofColor(255.f, 255.f, 255.f));
-    pointLight.setPosition(0, 0, 0);
+	pointLight.setSpecularColor( ofColor(255.f, 255.f, 0.f));
+	pointLight.setPointLight();
+    
+    
+	
+    spotLight.setDiffuseColor( ofColor(255.f, 0.f, 0.f));
+	spotLight.setSpecularColor( ofColor(255.f, 255.f, 255.f));
+    
+    // turn the light into spotLight, emit a cone of light //
+    spotLight.setSpotlight();
+    
+    // size of the cone of emitted light, angle between light axis and side of cone //
+    // angle range between 0 - 90 in degrees //
+    spotLight.setSpotlightCutOff( 50 );
+    
+    // rate of falloff, illumitation decreases as the angle from the cone axis increases //
+    // range 0 - 128, zero is even illumination, 128 is max falloff //
+    spotLight.setSpotConcentration( 45 );
+    
+	
+    // Directional Lights emit light based on their orientation, regardless of their position //
+	directionalLight.setDiffuseColor(ofColor(0.f, 0.f, 255.f));
+	directionalLight.setSpecularColor(ofColor(255.f, 255.f, 255.f));
+	directionalLight.setDirectional();
+    
+    // set the direction of the light
+    // set it pointing from left to right -> //
+	directionalLight.setOrientation( ofVec3f(0, 90, 0) );
     
     // shininess is a value between 0 - 128, 128 being the most shiny //
-	material.setShininess( 64 );
+	material.setShininess(80);
 
 
 	//---------------------------------------CONTROLLER MPD------------
@@ -92,7 +121,9 @@ void ofApp::setup()
 //--------------------------------------------------------------
 void ofApp::update()
 {
-	swarm.update();
+	for (int i=0; i<swarms.size(); ++i){
+		swarms[i].update();
+	}
 	if (mpd.newDataAvailable) {
 		updateParticleFromMpd();
 		mpd.newDataAvailable = false;
@@ -105,11 +136,11 @@ void ofApp::draw()
 {	
 	camera.begin();
 	//ofBackground(240);
-	ofBackground(10);
+	ofBackground(240);
 	//ofPushMatrix();
 	//ofTranslate(ofGetWidth()/2, ofGetHeight()/2);
 	/*
-	ofDisableDepthTest();
+	ofDisableDepthTest();e
 	for (unsigned int i=0; i<staticParticles.size(); ++i){
 		staticParticles[i].draw(-staticParticles[i].getPosition());
 	}git
@@ -123,12 +154,15 @@ void ofApp::draw()
 	//glEnable(GL_DEPTH_TEST); 
 
 	pointLight.enable();
+	spotLight.enable();
+	directionalLight.enable();
 	material.begin();
 
 
 	//drawBorders();		//TODO: fix alpha blending issue
-	swarm.draw();
-	
+	for (int i=0; i<swarms.size(); ++i){
+		swarms[i].draw();
+	}
 	//ofDrawAxis(32);
 	//ofPopMatrix();
 
@@ -146,21 +180,30 @@ void ofApp::draw()
 	if (!hideStats) {
 		ofSetColor(0);
 		ofDrawBitmapString("framerate: " + ofToString(ofGetFrameRate()),ofGetWidth() - 160, 20);
+		ofDrawBitmapString("num swarms: " + ofToString(swarms.size()),ofGetWidth() - 160, 40);
+		ofDrawBitmapString("sel swarm: " + ofToString(selectedSwarm),ofGetWidth() - 160, 65);
 	}
 }
 //--------------------------------------------------------------
 
+void ofApp::generateSwarm()
+{
+	if (swarms.size() < MAX_SWARMS) {
+		swarms.push_back(Swarm());
+		swarms[swarms.size()].setup();
+	}
+}
 
 //--------------------------------------------------------------GUI FUNCTIONS------------
 
 void ofApp::overwriteAttributes()
 {
-	swarm.overwriteAttributes(particleTemplate);
+	swarms[selectedSwarm].overwriteAttributes(particleTemplate);
 }
 
 void ofApp::overwriteParameters()
 {
-	swarm.overwriteParameters(particleTemplate);
+	swarms[selectedSwarm].overwriteParameters(particleTemplate);
 }
 
 void ofApp::drawBorders()
@@ -232,28 +275,47 @@ void ofApp::keyPressed(int key)
 		case 'f':
 			ofToggleFullscreen();
 			break;
+		case '1':
+			if (swarms.size() > 0) {
+				selectedSwarm = 0;
+			}
+			break;
+		case '2':
+			if (swarms.size() > 1) {
+				selectedSwarm = 1;
+			}
+			break;
+		case '3':
+			if (swarms.size() > 2) {
+				selectedSwarm = 2;
+			}
+			break;
+		case '4':
+			if (swarms.size() > 3) {
+				selectedSwarm = 3;
+			}
+			break;
+		case ' ':
+			overwriteAttributes();
+			overwriteParameters();
+			break;
+		case 'h':
+			hideGui = !hideGui;
+			break;
+		case 's':
+			hideStats = !hideStats;
+			break;
+		case 'k':
+			if (swarms[selectedSwarm].getNumParticles() > 0)
+	   			swarms[selectedSwarm].eliminateParticle(0);
+			break;
+		case '+':
+			generateSwarm();
+			break;
+		case 'n':
+			swarms[selectedSwarm].generateParticle(particleTemplate);
+			break;
 
-
-	}
-
-	if (key == '1') {
-		
-	} else if (key == '2') {
-	} else if (key == '3') {
-	} else if (key == '4') {
-	} else if (key == ' ') {
-		overwriteAttributes();
-		overwriteParameters();
-	} else if (key == 'h') {
-		hideGui = !hideGui;
-	} else if (key == 's') {
-		hideStats = !hideStats;
-	} else if (key == 'k') {
-		if (swarm.getNumParticles() > 0)
-	   		swarm.eliminateParticle(0);
-	} else {
-		swarm.generateParticle(particleTemplate);
-		//cout << getBit(particles[particles.size()-1].attributes.bits) << endl;
 	}
 }
 

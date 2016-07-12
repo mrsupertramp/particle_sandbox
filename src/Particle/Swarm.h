@@ -1,6 +1,9 @@
 #pragma once
 
+#include "ofMain.h"
 #include "Particle.h"
+
+#define MAX_PARTICLES	1000
 
 class Swarm{
 	public:

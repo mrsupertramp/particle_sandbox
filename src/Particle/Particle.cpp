@@ -28,6 +28,7 @@ Particle::Particle(ofVec3f pos_, ofVec3f vel_, ParticleParameter *parameters_, P
 	setParameters(parameters_);
 	setAttributes(attributes_);
 	changeState(STATE_IDLE);
+
 	//------------TESTING-------------
 	radiusBirth = 9;
 	radius = 9;
@@ -90,78 +91,14 @@ void Particle::update()
 	force = ofVec3f(0,0,0);
 }
 
-void Particle::draw(ofVec3f lookAt)
-{
-	ofFill();
-
-	ofPushMatrix();
-	ofSetColor(color);
-	
-	ofTranslate(getPosition());
-	
-	ofVec3f normal = lookAt;
-	normal.normalize();
-	
-	float rotationAmount;
-	ofVec3f rotationAngle;
-	ofQuaternion rotation;
-	
-	ofVec3f axis(0, 0, 1);
-	rotation.makeRotate(axis, normal);
-	rotation.getRotate(rotationAmount, rotationAngle);
-	ofRotate(rotationAmount, rotationAngle.x, rotationAngle.y, rotationAngle.z);
-	ofDrawCircle(ofVec3f(0,0,0), radius);
-	
-	if (attributes.spring_prev) {
-		//ofSetColor(200,0,0);	//rot
-		//ofDrawCircle(getPosition(), radius*0.6);
-	}
-	ofPopMatrix();
-	
-	if (prevPtr != NULL) {
-		ofSetColor(30);
-		
-		//draw arrow with p1,p2,p3 and tip at p2
-		
-		float size = getPosition().distance(prevPtr->getPosition()) * 0.3;
-		if (size > 50)
-			size = 50;
-		ofVec3f dirNorm = prevPtr->getPosition() - getPosition();
-		dirNorm.normalize();
-		
-		ofVec3f toTheLeft = dirNorm.getRotated( 90, ofVec3f( 0, 0, 1 ) );
-		ofVec3f toTheRight = dirNorm.getRotated( -90, ofVec3f( 0, 0, 1 ) );
-		
-		ofVec3f p1 = prevPtr->getPosition() - dirNorm*radius - dirNorm*size*0.7 + toTheRight*size*0.3;
-		ofVec3f p2 = prevPtr->getPosition() - dirNorm*radius;
-		ofVec3f p3 = prevPtr->getPosition() - dirNorm*radius - dirNorm*size*0.7 + toTheLeft*size*0.3;
-		
-		ofDrawLine(p1,p2);
-		ofDrawLine(p3,p2);
-		ofDrawLine(getPosition(), p2);
-		
-		//ofDrawLine(getPosition(),prevPtr->getPosition());
-		
-	}
-	
-}
-
 void Particle::draw()
 {
-	draw(ofVec3f(0,0,0));
+	drawing.drawSphere(getPosition()); // switch case
 }
 
-void Particle::drawSphere()
+void Particle::draw(ofVec3f dir)
 {
-	ofSpherePrimitive sphere;
-	sphere.setResolution(5);
-	ofPushMatrix();
-	ofTranslate(getPosition());
-	ofSetColor(255);
-	sphere.drawWireframe();
-	//sphere.draw();
-
-	ofPopMatrix();
+	
 }
 
 //--------------------------------------------------------------------------------------------
