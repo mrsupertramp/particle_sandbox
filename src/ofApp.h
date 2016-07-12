@@ -4,10 +4,13 @@ COPYRIGHT ENRICO STEINFELD. ALL RIGHTS RESERVED
 #pragma once
 
 #include "ofMain.h"
-#include "Particle.h"
 #include "ofxGui.h"
 //#include "ofxMidi.h"
 #include "MPD.h"
+#include "Swarm.h" 
+#include "Particle.h"
+
+#define MAX_SWARMS	10
 
 class ofApp : public ofBaseApp{
 
@@ -28,22 +31,14 @@ class ofApp : public ofBaseApp{
 		void mouseExited(int x, int y);
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
-		void gotMessage(ofMessage msg);
-	
-		void generateParticle(ofVec3f pos, ofVec3f vel);
-		void eliminateParticle(int index);
+		void gotMessage(ofMessage msg);		
 		
-		//void generateParticle(ofVec3f pos, ofVec3f vel, int attributes);
-		vector <Particle> particles;
-		//Particle nextParticle;
-		
-		vector <Particle> staticParticles;
-		
-		
+		void generateSwarm();
+
 		void drawBorders();
 		
-		//ofParameterGroup parameters;
-
+		void overwriteAttributes();
+		void overwriteParameters();
 		
 		ofxButton but_overwriteAttributes;
 		ofxButton but_overwriteParameters;
@@ -51,16 +46,15 @@ class ofApp : public ofBaseApp{
 		ofxPanel guiAttributes;
 		ofxPanel guiParameters;
 		
-		bool hideGui = false;
+		bool hideGui = false;		
 		
-		int attributesNextParticle;
+		vector <Swarm> swarms;
+		Swarm swarm;
 		
-		void overwriteAttributes();
-		void overwriteParameters();
-		
-		
-		
-		
+		Particle particleTemplate;
+
+		int selectedSwarm;
+
 		//--------------------------------------------------------------------
 		
 		
@@ -71,6 +65,13 @@ class ofApp : public ofBaseApp{
 		
 		//--------------------------------------------------------------------
 		
+		//-----------------------------------------------------LIGHTING----------
+		ofLight pointLight;
+		ofLight spotLight;
+    	ofLight directionalLight;
+
+		ofMaterial material;
+
 
 		//-------------------------------------------------------CONTROLER MPD----
 
@@ -91,6 +92,5 @@ class ofApp : public ofBaseApp{
 		
 	private:
 
-		Particle nextParticle;
 			
 };

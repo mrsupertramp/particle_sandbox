@@ -28,6 +28,7 @@ Particle::Particle(ofVec3f pos_, ofVec3f vel_, ParticleParameter *parameters_, P
 	setParameters(parameters_);
 	setAttributes(attributes_);
 	changeState(STATE_IDLE);
+
 	//------------TESTING-------------
 	radiusBirth = 9;
 	radius = 9;
@@ -80,7 +81,8 @@ void Particle::update()
 	acceleration = force / parameters.mass;
 	velocity += acceleration;
 	
-	if (attributes.spring_next || attributes.spring_prev) {
+	if ((attributes.spring_next && nextPtr != NULL) || 
+		(attributes.spring_prev && prevPtr != NULL)) {
 		velocity *= parameters.spring_damping;
 	}
 	
@@ -90,76 +92,14 @@ void Particle::update()
 	force = ofVec3f(0,0,0);
 }
 
-void Particle::drawCircle(ofVec3f lookAt)
+void Particle::draw()
 {
-	ofFill();
-
-	ofPushMatrix();
-	ofSetColor(color);
-	
-	ofTranslate(getPosition());
-	
-	ofVec3f normal = lookAt;
-	normal.normalize();
-	
-	float rotationAmount;
-	ofVec3f rotationAngle;
-	ofQuaternion rotation;
-	
-	ofVec3f axis(0, 0, 1);
-	rotation.makeRotate(axis, normal);
-	rotation.getRotate(rotationAmount, rotationAngle);
-	ofRotate(rotationAmount, rotationAngle.x, rotationAngle.y, rotationAngle.z);
-	ofDrawCircle(ofVec3f(0,0,0), radius);
-	
-	if (attributes.spring_prev) {
-		//ofSetColor(200,0,0);	//rot
-		//ofDrawCircle(getPosition(), radius*0.6);
-	}
-	ofPopMatrix();
-	
-	if (prevPtr != NULL) {
-		ofSetColor(30);
-		
-		//draw arrow with p1,p2,p3 and tip at p2
-		
-		float size = getPosition().distance(prevPtr->getPosition()) * 0.3;
-		if (size > 50)
-			size = 50;
-		ofVec3f dirNorm = prevPtr->getPosition() - getPosition();
-		dirNorm.normalize();
-		
-		ofVec3f toTheLeft = dirNorm.getRotated( 90, ofVec3f( 0, 0, 1 ) );
-		ofVec3f toTheRight = dirNorm.getRotated( -90, ofVec3f( 0, 0, 1 ) );
-		
-		ofVec3f p1 = prevPtr->getPosition() - dirNorm*radius - dirNorm*size*0.7 + toTheRight*size*0.3;
-		ofVec3f p2 = prevPtr->getPosition() - dirNorm*radius;
-		ofVec3f p3 = prevPtr->getPosition() - dirNorm*radius - dirNorm*size*0.7 + toTheLeft*size*0.3;
-		
-		ofDrawLine(p1,p2);
-		ofDrawLine(p3,p2);
-		ofDrawLine(getPosition(), p2);
-		
-		//ofDrawLine(getPosition(),prevPtr->getPosition());
-		
-	}
-	
+	drawing.drawSphere(getPosition()); // switch case
 }
 
-void Particle::drawCircle()
+void Particle::draw(ofVec3f dir)
 {
-	drawCircle(ofVec3f(0,0,0));
-}
 
-void Particle::drawSphere()
-{
-	ofSpherePrimitive sphere;
-	sphere.setRadius(20);
-
-	ofPushMatrix();
-	ofTranslate(getPosition());
-	sphere.draw();
-	ofPopMatrix();
 }
 
 //--------------------------------------------------------------------------------------------
@@ -197,12 +137,10 @@ void Particle::evaluateAttributes()
 			if (dist < CONST_CONNECT_DIST) {
 				nextPtr = &(particlesPtr->at(index));
 				nextPtr->prevPtr = &(particlesPtr->at(id));
-				//nextPtr->drag = 0.9999;
-				//nextPtr->mass = 5.0;
 		
 				attributes.connect_next.set(false);
 		
-				nextPtr->attributes.spring_prev.set(true);
+				//nextPtr->attributes.spring_prev.set(true);	//uncomment for automatic spring force
 				nextPtr->attributes.connect_prev.set(false);
 		
 				nextPtr->changeState(STATE_PAIRING);
@@ -304,9 +242,8 @@ void Particle::setAttributes(ParticleAttributes *attributes_)
 {
 	if (attributes_ != NULL) {		
 		for (unsigned int i=0; i<attributes.group.size(); ++i){
-			//cout << i << "  " << attributes.group.getBool(i) << "gets ";
+			attributes.group.getBool(i);
 			attributes.group.getBool(i).set(attributes_->group.getBool(i));//TODO: segmentation faul
-			//cout << attributes.group.getBool(i) << endl;
 		}
 
 		attributes.bits = attributes_->bits;

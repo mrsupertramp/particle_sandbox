@@ -9,6 +9,7 @@ COPYRIGHT ENRICO STEINFELD. ALL RIGHTS RESERVED
 #include "ofParameter.h"
 #include "ParticleParameter.h"
 #include "ParticleAttributes.h"
+#include "ParticleDrawing.h"
 
 //ein partikel befindet sich in EINEM state
 //kann als aufgabe interpretiert werden. wenn keine aufgabe vorhanden dann idle.
@@ -38,10 +39,10 @@ class Particle : public ofNode {
 		void setup();
 		void resetLinks();
 		virtual void update();
-		void drawSphere();
 
-		void drawCircle();
-		void drawCircle(ofVec3f lookAt);
+		virtual void draw();
+		virtual void draw(ofVec3f dir);
+		void drawSphere();
 		
 		void changeState(unsigned int newState);
 	
@@ -56,6 +57,7 @@ class Particle : public ofNode {
 
 		ParticleParameter parameters;
 		ParticleAttributes attributes;
+		ParticleDrawing drawing;
 		
 		void setParameters(ParticleParameter *parameters_);
 		void setAttributes(ParticleAttributes *attributes_);
@@ -74,7 +76,7 @@ class Particle : public ofNode {
 		
 		vector <Particle>* particlesPtr;
 		
-		//beliebig viele Verbindungen
+		//TODO: beliebig viele Verbindungen
 		Particle* prevPtr;
 		Particle* nextPtr;
 		
