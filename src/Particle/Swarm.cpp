@@ -44,10 +44,13 @@ void Swarm::generateParticle(Particle temp)
 	}
 }
 
+
 void Swarm::eliminateParticle(int index){
 	particles[index].resetLinks();
 	particles[index].isDead = true;
 }
+
+
 
 int Swarm::getNumParticles()
 {
